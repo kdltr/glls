@@ -11,8 +11,8 @@
 
 (module shader-export-example *
 
-(import chicken scheme)
-(use glls-render (prefix glfw3 glfw:) (prefix opengl-glew gl:) gl-math gl-utils)
+(import scheme (chicken base) (chicken bitwise)
+glls-render (prefix glfw3 glfw:) (prefix epoxy gl:) gl-math gl-utils)
 
 ;;; Mesh
 (define rect (make-mesh vertices: '(attributes: ((position #:float 2))
@@ -69,8 +69,10 @@
      (set! frag-color (colors pos)))))
 
 ;;; Initialization and main loop
-(glfw:with-window (640 480 "Example" resizable: #f)
-  (gl:init)
+(glfw:with-window (640 480 "Example" resizable: #f
+                   client-api: glfw:+opengl-api+
+                   context-version-major: 3
+                   context-version-minor: 3)
   (compile-pipelines)
   (mesh-make-vao! rect (pipeline-mesh-attributes simple-shader))
   (let* ((renderable (make-simple-shader-renderable mesh: rect

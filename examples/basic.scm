@@ -5,9 +5,7 @@
 
 (module basic-shader-example *
 
-(import chicken scheme)
-
-(use glls (prefix glfw3 glfw:) (prefix opengl-glew gl:))
+(import scheme (chicken base) (chicken platform) glls (prefix glfw3 #:glfw) (prefix epoxy #:gl))
 
 (define-pipeline foo 
   ((#:vertex input: ((vertex #:vec2) (color #:vec3))
@@ -32,8 +30,7 @@
   (bar uniform: (mvp #:mat4))
   (cadr (pipeline-shaders foo)))
 
-(glfw:with-window (640 480 "Example" resizable: #f)
-   (gl:init)
+(glfw:with-window (640 480 "Example" resizable: #f client-api: glfw:+opengl-api+ context-version-major: 3 context-version-minor: 3)
    (compile-pipelines)
    (print foo)
    (print baz))

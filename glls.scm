@@ -24,15 +24,24 @@
    %delete-shader
    %delete-pipeline)
 
-(import chicken scheme)
-(use glls-compiler (prefix opengl-glew gl:) (prefix gl-utils-core gl:) matchable extras
-      srfi-69 srfi-1 miscmacros)
-(import-for-syntax glls-compiler)
+(import
+  scheme
+  (chicken base)
+  (chicken format)
+  (chicken gc)
+  (chicken module)
+  (chicken syntax)
+  matchable
+  srfi-1
+  srfi-69
+  miscmacros
+  glls-compiler
+  (prefix epoxy #:gl)
+  (prefix gl-utils-core #:gl))
+
+(import-for-syntax (chicken platform) srfi-1 glls-compiler)
 
 (reexport glls-compiler)
-
-(begin-for-syntax
- (require-library glls-compiler))
 
 (define-record pipeline
   shaders (setter attributes) (setter uniforms) (setter program))
@@ -131,7 +140,7 @@
                     (create-pipeline ,@shader-makers))
                   (set! (pipeline-program ,name) old-program)
                   (compile-pipelines))
-                (define ,name
+                (set! ,name
                   (create-pipeline ,@shader-makers)))
            `(define ,name
               (create-pipeline ,@shader-makers)))))))

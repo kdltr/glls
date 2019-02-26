@@ -1,4 +1,4 @@
-(use test glls-compiler glls)
+(import test glls-compiler glls)
 
 (test-group "renaming"
   (test 'gl_Position (symbol->glsl 'gl:position))

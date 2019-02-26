@@ -11,8 +11,8 @@
 
 (module texture-glls-example *
 
-(import chicken scheme)
-(use glls-render (prefix glfw3 glfw:) (prefix opengl-glew gl:) gl-math gl-utils soil)
+(import scheme (chicken base) (chicken bitwise)
+glls-render (prefix glfw3 glfw:) (prefix epoxy gl:) gl-math gl-utils soil)
 
 ;; Mesh
 (define rect (make-mesh vertices: '(attributes: ((position #:float 2)
@@ -65,7 +65,6 @@
 (glfw:with-window (640 480 "Example" resizable: #f
                        context-version-major: 3
                        context-version-minor: 3)
-  (gl:init)
   (compile-pipelines)
   (mesh-make-vao! rect (pipeline-mesh-attributes sprite-shader))
   (let* ((texture (load-ogl-texture "img_test.png" 0 0 0))

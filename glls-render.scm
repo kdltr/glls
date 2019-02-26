@@ -2,10 +2,13 @@
                      define-pipeline
                      export-pipeline)
 
-(import chicken scheme)
-(use (prefix glls glls:) glls-renderable (prefix gl-utils gl:))
-(import-for-syntax (prefix glls glls:) (prefix glls-compiler glls:)
-                   glls-renderable matchable miscmacros data-structures)
+(import scheme
+(chicken base) (chicken keyword) (chicken module) (chicken syntax)
+
+(prefix glls glls:) glls-renderable (prefix gl-utils gl:))
+
+(import-for-syntax (chicken keyword) (chicken platform) srfi-1 (prefix glls glls:) (prefix glls-compiler glls:)
+                   glls-renderable matchable miscmacros)
 
 (reexport (except glls define-pipeline)
           (only glls-renderable
@@ -18,7 +21,6 @@
                 set-renderable-offset!))
 
 (begin-for-syntax
- (require-library glls-renderable)
  (define c-prefix (make-parameter '||))
  (define header-included? (make-parameter #f)))
 
@@ -75,7 +77,7 @@
                             (begin 
                               (header-included? #t)
                               `(begin
-                                 (import foreign)
+                                 (import (chicken foreign))
                                  (foreign-declare ,gllsRender.h)))
                             #f)
                        (foreign-declare ,render-funs)

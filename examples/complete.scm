@@ -11,8 +11,8 @@
 
 ;;;; Use arrow keys to rotate, zoom camera.
 
-(import chicken scheme)
-(use glls-render gl-math gl-utils (prefix glfw3 glfw:) (prefix opengl-glew gl:) srfi-4)
+(import scheme (chicken base) (chicken bitwise)
+glls-render gl-math gl-utils (prefix glfw3 glfw:) (prefix epoxy gl:) srfi-4)
 
 ;;; Matrices
 (define projection-matrix (perspective 640 480 0.01 100 70))
@@ -115,8 +115,10 @@
                     face: 'vertex_indices))
 
 ;;; Initialize and main loop
-(glfw:with-window (640 480 "Example" resizable: #f)
-  (gl:init)
+(glfw:with-window (640 480 "Example" resizable: #f
+                   client-api: glfw:+opengl-api+
+                   context-major-version: 3
+                   context-minor-version: 3)
    (gl:enable gl:+depth-test+)
    (gl:depth-func gl:+less+)
    (compile-pipelines)

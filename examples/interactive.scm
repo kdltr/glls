@@ -3,8 +3,8 @@
 ;;;; An example of an interactive glls environment
 ;;;; Run with csi
 
-(import chicken scheme)
-(use glls-render (prefix glfw3 glfw:) (prefix opengl-glew gl:) gl-math gl-utils
+(import scheme (chicken base) (chicken bitwise)
+glls-render (prefix glfw3 glfw:) (prefix epoxy gl:) gl-math gl-utils
      srfi-18)
 
 ;; Mesh
@@ -60,8 +60,10 @@
 ;;; Run in a thread so that you can still use the REPL
 (thread-start!
  (lambda ()
-   (glfw:with-window (640 480 "Example" resizable: #f)
-     (gl:init)
+   (glfw:with-window (640 480 "Example" resizable: #f
+                      client-api: glfw:+opengl-api+
+                      context-version-major: 3
+                      context-version-minor: 3)
      (compile-pipelines)
      (mesh-make-vao! rect (pipeline-mesh-attributes simple-shader) #:dynamic)
      (let ((renderable (make-simple-shader-renderable mesh: rect

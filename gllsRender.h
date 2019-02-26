@@ -1,12 +1,4 @@
-#if defined (__APPLE__)
-#include <OpenGL/gl.h>
-#elif defined (GLES)
-#include <GLES3/gl3.h>
-#elif defined (_WIN32)
-#include <GL/glew.h>
-#else
-#include <GL/gl.h>
-#endif
+#include <epoxy/gl.h>
 
 typedef struct GLLSrenderable2{
     unsigned int program, vao, nElements, elementType, mode;

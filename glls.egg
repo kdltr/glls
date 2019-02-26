@@ -1,0 +1,17 @@
+;; glls.egg -*- scheme -*-
+
+((synopsis "A compiler for a Scheme-like language targeting the GLSL")
+ (author "Alex Charlton")
+ (category graphics)
+ (license "BSD")
+ (dependencies epoxy gl-utils miscmacros matchable fmt srfi-1 srfi-42 srfi-69)
+ (test-dependencies test)
+ (components (extension glls
+                        (component-dependencies glls-compiler))
+             (extension glls-compiler)
+             (extension glls-render
+                        (component-dependencies glls glls-renderable))
+             (extension glls-renderable
+                        (source-dependencies "gllsRender.h")
+                        (component-dependencies glls glls-compiler)
+                        (link-options "-L" "-lepoxy"))))

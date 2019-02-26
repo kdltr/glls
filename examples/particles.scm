@@ -8,10 +8,10 @@
 ;;;; E.g.:
 ;;;; csc -lGL complete.scm
 
-(import chicken scheme)
+(import scheme (chicken bitwise) (chicken random) srfi-1 srfi-4
 
 ;; note we don't need gl-math in this example
-(use glls-render (prefix glfw3 glfw:) (prefix opengl-glew gl:) gl-utils
+glls-render (prefix glfw3 glfw:) (prefix epoxy gl:) gl-utils
      srfi-18 miscmacros)
 
 ;; a shader that draws points as blurry circles. this form be
@@ -50,9 +50,9 @@
                (dotimes (it (mesh-n-vertices point-mesh))
                         (let ((p (mesh-vertex-ref point-mesh 'position it)))
                           (f32vector-set! p 0 (+ (f32vector-ref p 0)
-                                                 (/ (- (random 1000) 500) 200000)))
+                                                 (/ (- (pseudo-random-integer 1000) 500) 200000)))
                           (f32vector-set! p 1 (+ (f32vector-ref p 1)
-                                                 (/ (- (random 1000) 500) 200000)))
+                                                 (/ (- (pseudo-random-integer 1000) 500) 200000)))
                           (mesh-vertex-set! point-mesh 'position it p))))))
 
 
@@ -72,8 +72,10 @@
 ;;; Run in a thread so that you can still use the REPL
 (thread-start!
  (lambda ()
-   (glfw:with-window (640 480 "Example" resizable: #f)
-     (gl:init)
+   (glfw:with-window (640 480 "Example" resizable: #f
+                      client-api: glfw:+opengl-api+
+                      context-version-major: 3
+                      context-version-minor: 3)
 
      (gl:enable gl:+vertex-program-point-size+)
      (gl:enable gl:+blend+)

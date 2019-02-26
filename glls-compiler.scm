@@ -20,10 +20,19 @@
    %make-shader
    %create-shader)
 
-(import chicken scheme)
-
-(use extras data-structures srfi-1 srfi-69
-     fmt fmt-c matchable miscmacros irregex)
+(import
+  scheme
+  (chicken base)
+  (chicken format)
+  (chicken irregex)
+  (chicken keyword)
+  (chicken syntax)
+  matchable
+  srfi-1
+  srfi-69
+  miscmacros
+  fmt
+  fmt-c)
 
 ;;; Shader record
 (define-record shader

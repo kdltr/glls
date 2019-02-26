@@ -11,10 +11,26 @@
                          gllsRender.h
                          renderable-size)
 
-(import chicken scheme foreign)
-(use glls glls-compiler fmt fmt-c miscmacros (prefix opengl-glew gl:)
-     (prefix gl-utils-core gl:) (prefix gl-utils-mesh gl:)
-     lolevel irregex srfi-1 srfi-4 extras)
+(import
+  scheme
+  (chicken base)
+  (chicken foreign)
+  (chicken gc)
+  (chicken irregex)
+  (chicken keyword)
+  (chicken memory)
+  srfi-1
+  srfi-4
+  glls
+  glls-compiler
+  fmt
+  fmt-c
+  miscmacros
+  (prefix epoxy #:gl)
+  (prefix gl-utils-core #:gl)
+  (prefix gl-utils-mesh #:gl))
+
+(import-for-syntax (chicken io))
 
 (foreign-declare "#include <math.h>")
 (foreign-declare "#include \"gllsRender.h\"")
