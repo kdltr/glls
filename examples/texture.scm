@@ -5,9 +5,9 @@
 ;;;; Must be run in the same directory as img_test.png
 
 ;;;; NOTE:
-;;;; This uses glls-render, so if this file is compiled it must be linked with OpenGL
+;;;; This uses glls-render, so if this file is compiled it must be linked with libepoxy
 ;;;; E.g.:
-;;;; csc -lGL texture.scm
+;;;; csc -L -lepoxy texture.scm
 
 (module texture-glls-example *
 

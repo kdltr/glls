@@ -1,12 +1,9 @@
 ;;;; simple.scm
 
-;;;; This is a glls version of the example found on the opengl-glew wiki page:
-;;;; https://wiki.call-cc.org/eggref/4/opengl-glew
-;;;;
 ;;;; NOTE:
-;;;; This uses glls-render, so if this file is compiled it must be linked with OpenGL
+;;;; This uses glls-render, so if this file is compiled it must be linked with libepoxy
 ;;;; E.g.:
-;;;; csc -lGL simple.scm
+;;;; csc -L -lepoxy simple.scm
 
 ;; (module simple-glls-example *
 

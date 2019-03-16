@@ -4,9 +4,9 @@
 ;;;; mvp matrices, and manipulates particle vertex data at runtime.
 
 ;;;; NOTE:
-;;;; This uses glls-render, so if this file is compiled it must be linked with OpenGL
+;;;; This uses glls-render, so if this file is compiled it must be linked with libepoxy
 ;;;; E.g.:
-;;;; csc -lGL complete.scm
+;;;; csc -L -lepoxy particles.scm
 
 (import scheme (chicken bitwise) (chicken random) srfi-1 srfi-4
 
@@ -69,8 +69,7 @@ glls-render (prefix glfw3 glfw:) (prefix epoxy gl:) gl-utils
   (render-point-shader renderable))
 
 ;;; Initialization and main loop
-;;; Run in a thread so that you can still use the REPL
-(thread-start!
+(define main
  (lambda ()
    (glfw:with-window (640 480 "Example" resizable: #f
                       client-api: glfw:+opengl-api+
@@ -91,4 +90,7 @@ glls-render (prefix glfw3 glfw:) (prefix epoxy gl:) gl-utils
        (unless (glfw:window-should-close? (glfw:window))
          (loop))))))
 
+;;; Run in a thread so that you can still use the REPL
+(define thr (thread-start! main))
 
+(cond-expand ((or compiling chicken-script) (thread-join! thr)) (else))

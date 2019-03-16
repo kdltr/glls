@@ -1,13 +1,13 @@
 ;;;; complete.scm
 
 ;;;; This example illustrates phong-shading in glls with a model
-;;;; loaded by opengl-glew. The file "horse.ply.gz" must be in
+;;;; loaded by epoxy. The file "horse.ply.gz" must be in
 ;;;; the same directory as this program.
 
 ;;;; NOTE:
-;;;; This uses glls-render, so if this file is compiled it must be linked with OpenGL
+;;;; This uses glls-render, so if this file is compiled it must be linked with libepoxy
 ;;;; E.g.:
-;;;; csc -lGL complete.scm
+;;;; csc -L -lepoxy complete.scm
 
 ;;;; Use arrow keys to rotate, zoom camera.
 

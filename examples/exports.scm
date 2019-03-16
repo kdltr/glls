@@ -5,9 +5,9 @@
 ;;;; E.g.: In the example below, 'shift' is not 'use'd by 'simple-shader', but still gets compiled into the pipeline because it is 'use'd by 'colorer'
 
 ;;;; NOTE:
-;;;; This uses glls-render, so if this file is compiled it must be linked with OpenGL
+;;;; This uses glls-render, so if this file is compiled it must be linked with libepoxy
 ;;;; E.g.:
-;;;; csc -lGL texture.scm
+;;;; csc -L -lepoxy export.scm
 
 (module shader-export-example *
 

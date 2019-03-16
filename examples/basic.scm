@@ -1,7 +1,7 @@
 ;;;; basic.scm
 
 ;;;; This is the second example found on the glls wiki page:
-;;;; https://wiki.call-cc.org/eggref/4/glls
+;;;; https://wiki.call-cc.org/egg/glls
 
 (module basic-shader-example *
 
