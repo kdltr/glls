@@ -16,8 +16,10 @@
   (test "1 + 2;\n" (compile-expr '(+ 1 2)))
   (test "pow(a, 2);\n"
         (compile-expr '(expt a 2)))
-  (test "vec4(position, 0.0, (0.5 + x + y));\n"
+  (test "vec4(position, 0.0, 0.5 + x + y);\n"
         (compile-expr '(vec4 position 0.0 (+ 0.5 x y))))
+  (test "vec4(position, 0.0, 0.5 + x * (y + z));\n"
+        (compile-expr '(vec4 position 0.0 (+ 0.5 (* x (+ y z))))))
   (test "position.xyz;\n"
         (compile-expr '(swizzle position x y z)))
   (test "array.length();\n"
