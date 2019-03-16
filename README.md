@@ -1,5 +1,5 @@
 # glls
-glls (GL Lisp Shaders) lets you write [GLSL](https://www.opengl.org/documentation/glsl/) (OpenGL Shader Language) shaders in a convenient pseudo-scheme language in Chicken Scheme. The compilation into GLSL happens at compile-time for zero run-time cost. Run-time compilation and dynamic recompilation is also supported. To those that want to dynamically construct shaders: I solute you.
+glls (GL Lisp Shaders) lets you write [GLSL](https://www.opengl.org/documentation/glsl/) (OpenGL Shader Language) shaders in a convenient pseudo-scheme language in Chicken Scheme. The compilation into GLSL happens at compile-time for zero run-time cost. Run-time compilation and dynamic recompilation is also supported. To those that want to dynamically construct shaders: I salute you.
 
 In addition to the eponymous module, glls also provides the `glls-render` module. `glls-render` enhances glls to create automatic rendering functions for each pipeline. When compiled, these rendering functions are created in efficient C, although dynamic functions are also provided. See the section [Automatic render functions](#automatic-render-functions) for details.
 
@@ -7,20 +7,22 @@ The idea for glls was hugely inspired by [Varjo](https://github.com/cbaggers/var
 
 That said, while this library bears some superficial resemblance to Varjo, the approach is quite different. While Varjo does a lot of work to validate the the lispy-glls expressions (including type checking), glls only performs cursory syntactic checking. The result of this is that one could probably write shaders in Varjo without knowing the GLSL and could be reasonably sure that those shaders would always compile to something that would mostly work. glls makes no such promises, so it is entirely possible to generate GLSL that won’t compile. Being able to understand GLSL code is therefore a prerequisite for successful shader debugging. The GLSL code output by glls is beautifully formatted, thanks to Alex Shinn’s amazing [fmt](http://synthcode.com/scheme/fmt/) library. fmt is responsible for far more than just the GLSL formatting, since it is basically a compiler of its own. The compilation portion of glsl is more or less a thin layer on top of fmt.
 
-glls should work on Linux, Mac OS X, Windows, and with OpenGL ES. glls will automatically compile with ES support on ARM hardware, or when `gles` is defined during compilation (e.g. `chicken-install -D gles`).
+glls should work on Linux, Mac OS X and Windows. Support for OpenGL ES is not yet in an usable state.
 
 ## Installation
-This repository is a [Chicken Scheme](http://call-cc.org/) egg.
+This repository is a [Chicken Scheme](https://call-cc.org/) egg.
 
-It is part of the [Chicken egg index](http://wiki.call-cc.org/chicken-projects/egg-index-4.html) and can be installed with `chicken-install glls`.
+It is part of the [Chicken egg index](https://eggs.call-cc.org/5/) and can be installed with `chicken-install glls`.
 
 ## Requirements
-* make
 * fmt
 * matchable
 * miscmacros
-* opengl-glew
+* epoxy
+* gl-utils
+* srfi-1
 * srfi-42
+* srfi-69
 
 ## Documentation
 glls contains three modules: glls-render, glls, and glls-compiler. glls-render rexports glls and glls-compiler and is used when you want the functionality of glls plus the addition of [automatically generated render functions](#automatic-render-functions). glls is the primary module, providing the main interface to shaders and pipelines, which also rexports glls-compiler. glls-compiler provides the functions used to compile shaders.
@@ -30,7 +32,7 @@ glls contains three modules: glls-render, glls, and glls-compiler. glls-render r
 The default GLSL version used by shaders. Defaults to `120` on GL ES platforms, `330` otherwise. Can also be a list, see `<version>` under [Shader syntax](#shader-syntax). When compiling a file with a shader, modifying this parameter will only take effect if you change it before the compilation phase. E.g.:
 
 ``` Scheme
-(use-for-syntax glls)
+(import-for-syntax glls)
 (begin-for-syntax (glsl-version 300))
 ```
 
@@ -67,7 +69,7 @@ Created with `define-pipeline` or `create-pipeline`, contains the data needed fo
 
 Defines a new `pipeline` named `NAME`. The `SHADERS` should either be forms conforming to language defined in the section [The glls shader language](#the-glls-shader-language), `shader`s defined by `define-shader`, or a mix of the two. Pipelines must have at least one vertex and one fragment shader to be able to compile. Before pipelines are used, they must be compiled by OpenGL with `compile-pipeline` or `compile-pipelines`.
 
-`define-pipeline` behaves differently when it is being evaluated *and* when a given pipeline is being redefined. In this case, the new pipeline inherits the GL program ID of the old one. Additionally, the pipeline is compiled by OpenGL right away (and as a consequence, so are any pipelines that are pending compilation). This is done so that pipelines can be edited and reevaluated in a REPL session and one’s scene will be updated as expected. See the [interactive example](https://github.com/AlexCharlton/glls/blob/master/examples/interactive.scm) for an example of how this can be accomplished.
+`define-pipeline` behaves differently when it is being evaluated *and* when a given pipeline is being redefined. In this case, the new pipeline inherits the GL program ID of the old one. Additionally, the pipeline is compiled by OpenGL right away (and as a consequence, so are any pipelines that are pending compilation). This is done so that pipelines can be edited and reevaluated in a REPL session and one’s scene will be updated as expected. See the [interactive example](https://www.upyum.com/cgit.cgi/glls/tree/examples/interactive.scm) for an example of how this can be accomplished.
 
 `define-pipeline` has additional effects when used with the `glls-render` module (see [Automatic render functions](#automatic-render-functions)).
 
@@ -93,7 +95,7 @@ Return the location of `ATTRIBUTE`. The `PIPELINE` must be compiled before this 
 
     [procedure] (pipeline-mesh-attributes PIPELINE)
 
-Return a list of `(ATTRIBUTE-NAME . LOCATION)` pairs, suitable for passing to [gl-utils’](http://wiki.call-cc.org/eggref/4/gl-utils) `mesh-make-vao!`.
+Return a list of `(ATTRIBUTE-NAME . LOCATION)` pairs, suitable for passing to [gl-utils’](https://wiki.call-cc.org/egg/gl-utils) `mesh-make-vao!`.
 
 ### The glls shader language
 #### Shader syntax
@@ -121,7 +123,7 @@ The shaders of glls – the forms that `define-shader`, `define-pipeline`, etc. 
 
 
 #### Shader Lisp
-For the most part, the Lisp used to define glls shaders looks like Scheme with one notable difference: types must be specified whenever a variable or function is defined. Under the hood, forms are being passed to [fmt](https://wiki.call-cc.org/eggref/4/fmt#c-as-s-expressions), so everything that you can do there will work in glls. Details of the Lisp used for shaders is provided in the following sections.
+For the most part, the Lisp used to define glls shaders looks like Scheme with one notable difference: types must be specified whenever a variable or function is defined. Under the hood, forms are being passed to [fmt](https://wiki.call-cc.org/egg/fmt#c-as-s-expressions), so everything that you can do there will work in glls. Details of the Lisp used for shaders is provided in the following sections.
 
 It should be possible to do almost anything in glls that you would want to do with the GLSL. Known exceptions to this is are: layout qualifiers (which I don’t feel are terribly relevant in the context of Scheme, at least not until uniform locations become prevalent), do-while loops (which have no Scheme analog), and uniform blocks, `#line`, `#undef`, and struct uniforms all for no good reason. Let me know if there are any features that you find lacking.
 
@@ -255,7 +257,7 @@ glls lets you define shaders that export symbols through the use of the [`export
 
 Shaders that export should not have any inputs or outputs.
 
-See the example [exports.scm](https://github.com/AlexCharlton/glls/blob/master/examples/exports.scm) to see this in action.
+See the example [exports.scm](https://www.upyum.com/cgit.cgi/glls/tree/examples/exports.scm) to see this in action.
 
 ### Automatic render functions
 By using the `glls-render` module, you can have glls automatically generate functions that will render an object with your glls pipeline. `glls-render` wraps `define-pipeline` so that it also defines a set of functions used for rendering and managing the *renderable* objects that are specific to that pipeline: one to create them, several to render them, and others to manipulate them. `glls-render` should not be used with the `glls` module: It reexports everything that you need from `glls`.
@@ -279,13 +281,13 @@ Of course, if you are defining the shaders in the pipeline, then a separate list
 
 Where `PIPELINE-NAME` is the name of the pipeline who’s renderables are being created.
 
-- `VAO` – A VAO such as those returned by [opengl-glew’s `make-vao`](http://api.call-cc.org/doc/opengl-glew/make-vao). I.e.: A VAO that binds an array of attributes – for each element in the pipeline – as well as an element array.
-- `MODE` – The drawing mode to use when drawing the elements of the VAO. Must be mode that is accepted by (gl-utils’) [mode->gl](http://api.call-cc.org/doc/gl-utils/mode-%3Egl). Defaults to `#:triangles`.
+- `VAO` – A VAO such as those returned by [epoxy’s](https://wiki.call-cc.org/egg/epoxy) `make-vao`. I.e.: A VAO that binds an array of attributes – for each element in the pipeline – as well as an element array.
+- `MODE` – The drawing mode to use when drawing the elements of the VAO. Must be mode that is accepted by (gl-utils’) [mode->gl](https://api.call-cc.org/5/doc/gl-utils/mode-%3Egl). Defaults to `#:triangles`.
 - `N-ELEMENTS` – The number of elements (vertices) to draw.
 - `ELEMENT-TYPE` – The type of the values in the VAO’s element array. Must be one of `#:unsigned-byte`, `#:unsigned-short`, or `#:unsigned-int`. Not required if the VAO has no element array (i.e. `render-arrays-PIPELINE-NAME` is being used to render).
 - `MESH` – A [gl-utils](http://wiki.call-cc.org/eggref/4/gl-utils) mesh, provided in place of `VAO`, `MODE`, `N-ELEMENTS`, and `ELEMENT-TYPE`.
 - `OFFSET` – A byte offset to the location of the desired indices to draw.
-- `DATA` – An optional pointer to an appropriate glls renderable object. If not provided, a fresh renderable object will be created. [gllsRenderable.h](https://github.com/AlexCharlton/glls/blob/master/gllsRender.h) defines the structs used for renderables. Which struct is used for a given pipeline is chosen based on the number of uniforms present in the pipeline.
+- `DATA` – An optional pointer to an appropriate glls renderable object. If not provided, a fresh renderable object will be created. [gllsRender.h](https://www.upyum.com/cgit.cgi/glls/tree/gllsRender.h) defines the structs used for renderables. Which struct is used for a given pipeline is chosen based on the number of uniforms present in the pipeline.
 
 See the [`glDrawElements` documentation](https://www.opengl.org/sdk/docs/man/html/glDrawElements.xhtml) for more information about these expected arguments.
 
@@ -335,14 +337,12 @@ Since glls-render causes `define-pipeline` to define multiple functions, this ma
 
 
 ## Examples
-These examples depends on the [glfw3](http://wiki.call-cc.org/eggref/4/glfw3) egg for window and context creation. The examples presented here illustrate only very basic shader definition and loading. For more complete examples, see the [examples directory](https://github.com/AlexCharlton/glls/tree/master/examples) of the source.
+These examples depends on the [glfw3](https://wiki.call-cc.org/egg/glfw3) egg for window and context creation. The examples presented here illustrate only very basic shader definition and loading. For more complete examples, see the [examples directory](https://www.upyum.com/cgit.cgi/glls/tree/examples) of the source.
 
 Aside from knowing how to write glls shaders, only one macro, one function, and one record is necessary to use glls: `define-pipeline`, `compile-pipelines`, and the record `pipeline`. This example illustrates this minimal pipeline creation
 
 ``` Scheme
-(import chicken scheme)
-
-(use glls (prefix glfw3 glfw:) (prefix opengl-glew gl:))
+(import scheme glls (prefix glfw3 glfw:) (prefix epoxy gl:))
 
 (define-pipeline foo 
   ((#:vertex input: ((vertex #:vec2) (color #:vec3))
@@ -357,7 +357,6 @@ Aside from knowing how to write glls shaders, only one macro, one function, and 
      (set! frag-color (vec4 c 1.0)))))
 
 (glfw:with-window (640 480 "Example" resizable: #f)
-   (gl:init)
    (compile-pipelines)
    (print foo)
    (gl:use-program (pipeline-program foo)))
@@ -366,9 +365,7 @@ Aside from knowing how to write glls shaders, only one macro, one function, and 
 This example is similar to the first, but also illustrates the ability to define pipelines in different ways.
 
 ``` Scheme
-(import chicken scheme)
-
-(use glls (prefix glfw3 glfw:) (prefix opengl-glew gl:))
+(import scheme glls (prefix glfw3 glfw:) (prefix epoxy gl:))
 
 (define-pipeline foo 
   ((#:vertex input: ((vertex #:vec2) (color #:vec3))
@@ -394,13 +391,18 @@ This example is similar to the first, but also illustrates the ability to define
   (cadr (pipeline-shaders foo)))
 
 (glfw:with-window (640 480 "Example" resizable: #f)
-   (gl:init)
    (compile-pipelines)
    (print foo)
    (print baz))
 ```
 
 ## Version history
+### Version 0.12.0
+16 March 2019
+
+- Maintenance given to [Kooda](/users/kooda)
+- Port to CHICKEN 5
+
 ### Version 0.11.0
 23 January 2014
 
@@ -517,12 +519,14 @@ This example is similar to the first, but also illustrates the ability to define
 * Initial release
 
 ## Source repository
-Source available on [GitHub](https://github.com/AlexCharlton/glls).
+Source available [here](https://www.upyum.com/cgit.cgi/glls/).
 
-Bug reports and patches welcome! Bugs can be reported via GitHub or to alex.n.charlton at gmail.
+Bug reports and patches welcome! Bugs can be reported to kooda@upyum.com
 
-## Author
+## Authors
 Alex Charlton
+
+Adrien (Kooda) Ramos
 
 ## Licence
 BSD

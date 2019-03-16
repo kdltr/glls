@@ -2,6 +2,7 @@
 
 ((synopsis "A compiler for a Scheme-like language targeting the GLSL")
  (author "Alex Charlton")
+ (maintainer "Adrien (Kooda) Ramos")
  (category graphics)
  (license "BSD")
  (dependencies epoxy gl-utils miscmacros matchable fmt srfi-1 srfi-42 srfi-69)
@@ -14,4 +15,4 @@
              (extension glls-renderable
                         (source-dependencies "gllsRender.h")
                         (component-dependencies glls glls-compiler)
-                        (link-options "-L" "-lepoxy"))))
+                        (custom-build build-epoxy))))

@@ -1,9 +1,0 @@
-;; glls.meta -*- scheme -*-
-
-((synopsis "A compiler for a Scheme-like language targeting the GLSL")
- (author "Alex Charlton")
- (category graphics)
- (license "BSD")
- (depends make opengl-glew gl-utils miscmacros matchable fmt srfi-42)
- (test-depends test)
- (foreign-depends "gl" "GLEW"))
