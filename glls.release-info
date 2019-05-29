@@ -1,3 +1,4 @@
 (repo git "git://upyum.com/glls")
 (uri targz "http://www.upyum.com/cgit.cgi/{egg-name}/snapshot/{egg-name}-{egg-release}.tar.gz")
+(release "0.12.1")
 (release "0.12.0")

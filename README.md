@@ -397,6 +397,11 @@ This example is similar to the first, but also illustrates the ability to define
 ```
 
 ## Version history
+### Version 0.12.1
+29 May 2019
+
+- Fix keyword usage for CHICKEN 5.1
+
 ### Version 0.12.0
 16 March 2019
 

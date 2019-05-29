@@ -147,6 +147,10 @@
    (else (c-wrap-stmt (dsp x)))))
 
 (define (symbol->glsl sym)
+  (define (symbolic->string o)
+    (cond ((symbol? o) (symbol->string o))
+          ((keyword? o) (keyword->string o))
+          (else (error "argument is neither a symbol nor a keyword" 'symbol->glsl))))
   (define (cammel-case str)
     (irregex-replace/all "[:-](.)" str
                          (lambda (m)
@@ -175,7 +179,7 @@
     (irregex-replace/all "DMs" str "DMS"))
   (define (all sym)
     (string->symbol (multi-sample (dimensions (illegal-chars
-                                               (cammel-case (symbol->string sym)))))))
+                                               (cammel-case (symbolic->string sym)))))))
   (case sym
     ((emit-vertex) 'EmitVertex)
     ((end-primitive) 'EndPrimitive)
@@ -192,7 +196,8 @@
 
 (define (type? x)
   (or (symbol? x)
-      ((list-of? symbol?) x)))
+      (keyword? x)
+      ((list-of? (disjoin symbol? keyword?)) x)))
 
 (define (compound-type? x)
   (match x
