@@ -397,8 +397,8 @@ This example is similar to the first, but also illustrates the ability to define
 ```
 
 ## Version history
-### Version 0.12.1
-29 May 2019
+### Version 0.12.2
+30 May 2019
 
 - Fix keyword usage for CHICKEN 5.1
 
